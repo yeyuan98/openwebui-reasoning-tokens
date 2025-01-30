@@ -6,6 +6,13 @@ date: 2025-01-30
 version: 0.1
 license: MIT
 description: Enables reasoning tokens and displays them visually in OWUI
+
+
+After installing and enabling, 3 models will be added which will have the "Thinking..." feature.
+These models will be prefixed with "reasoning/".
+
+You will probably have an issue with the generated titles.
+You can go to Admin Panel -> Settings -> Interface, then change the Task Model to something else instead of "Current Model".
 """
 
 from pydantic import BaseModel, Field
