@@ -8,7 +8,7 @@ license: MIT
 description: Enables reasoning tokens and displays them visually in OWUI
 
 
-After installing and enabling, 3 models will be added which will have the "Thinking..." feature.
+After installing and enabling, new models will be added which will have the "Thinking..." feature.
 These models will be prefixed with "reasoning/".
 
 You will probably have an issue with the generated titles.
