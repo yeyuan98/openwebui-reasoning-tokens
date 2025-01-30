@@ -37,7 +37,6 @@ class Pipe:
             'deepseek/deepseek-r1:free',
             'deepseek/deepseek-r1-distill-llama-70b',
             'deepseek/deepseek-r1',
-            'deepseek/deepseek-r1-distill-qwen-32b'
         ]
 
         return [{
