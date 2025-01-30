@@ -42,6 +42,8 @@ class Pipe:
         headers = {
             "Authorization": f"Bearer {self.valves.OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
+            "HTTP-Referer": "https://openwebui.com/",
+            "X-Title": "Open WebUI",
         }
 
         # Modify the request to include reasoning tokens and fix model ID
