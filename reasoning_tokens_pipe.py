@@ -13,6 +13,7 @@ Refer to Github repo for instructions.
 
 Current limitation: token count statistics does not display in OWUI
 """
+
 from pydantic import BaseModel, Field
 import logging
 import requests
@@ -23,41 +24,44 @@ import time
 class Pipe:
     class Valves(BaseModel):
         API_BASE_URL: str = Field(default="https://api.siliconflow.cn/v1")
-        #API_BASE_URL: str = Field(default="https://ark.cn-beijing.volces.com/api/v3")
+        # API_BASE_URL: str = Field(default="https://ark.cn-beijing.volces.com/api/v3")
         API_KEY: str = Field(
             default="",
             description="API key for authentication",
         )
         API_REASONING_TOKEN_REQUEST: str = Field(
             default="",
-            description="Additional request field for reasoning tokens (use default if not needed)"
+            description="Additional request field for reasoning tokens (use default if not needed)",
         )
         API_REASONING_TOKEN_FIELD: str = Field(
             default="reasoning_content",
-            description="Field containing reasoning tokens in the response (vary by provider)"
+            description="Field containing reasoning tokens in the response (vary by provider)",
         )
         API_MODELS: str = Field(
             default="deepseek-ai/DeepSeek-R1",
-            description="Model names separated by comma without any space"
+            description="Model names separated by comma without any space",
         )
         LOG_CONSOLE: bool = False
 
     def __init__(self):
         self.valves = self.Valves()
         self.logger = logging.getLogger(__name__)
-    
+
     def log(self, log_line):
         if self.valves.LOG_CONSOLE:
-            self.logger.warning(log_line) # Somehow WARN is the threshold, not INFO
+            self.logger.warning(log_line)  # Somehow WARN is the threshold, not INFO
 
     def pipes(self):
         models = self.valves.API_MODELS.split(",")
         self.log("Registered models: " + json.dumps(models))
 
-        return [{
-            "id": f"reasoning/{model}",
-            "name": f"reasoning/{model}",
-        } for model in models]
+        return [
+            {
+                "id": f"reasoning/{model}",
+                "name": f"reasoning/{model}",
+            }
+            for model in models
+        ]
 
     def pipe(self, body: dict):
         headers = {
@@ -77,7 +81,7 @@ class Pipe:
 
         if self.valves.API_REASONING_TOKEN_REQUEST != "":
             modified_body[self.valves.API_REASONING_TOKEN_REQUEST] = True
-        
+
         self.log("Request POST:")
         self.log("    Header: " + json.dumps(headers))
         self.log("    Body: " + json.dumps(modified_body))
@@ -117,7 +121,7 @@ class Pipe:
         reasoning_field = self.valves.API_REASONING_TOKEN_FIELD
         self.log("Response [Streaming, lines below]:")
 
-        def construct_chunk(content, role='assistant'):
+        def construct_chunk(content, role="assistant"):
             return f"""data: {json.dumps({
                 'id': data.get('id'),
                 'object': 'chat.completion.chunk',
