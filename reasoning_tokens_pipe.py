@@ -15,6 +15,7 @@ Current limitation: token count statistics does not display in OWUI
 """
 
 from pydantic import BaseModel, Field
+import itertools
 import logging
 import requests
 import json
@@ -39,7 +40,11 @@ class Pipe:
         )
         API_MODELS: str = Field(
             default="deepseek-ai/DeepSeek-R1",
-            description="Model names separated by comma without any space",
+            description="Model IDs separated by comma without any space",
+        )
+        API_MODEL_NAMES: str = Field(
+            default="",
+            description="Model display names separated by comma without any space",
         )
         LOG_CONSOLE: bool = False
 
@@ -55,13 +60,21 @@ class Pipe:
         models = self.valves.API_MODELS.split(",")
         self.log("Registered models: " + json.dumps(models))
 
-        return [
-            {
-                "id": f"reasoning/{model}",
-                "name": f"reasoning/{model}",
-            }
-            for model in models
-        ]
+        # If the user has asked us to display custom names, do so. If they didn't provide names, give a default (flagged with `None`). If the user provided too few names, extend with `None`. If they provided too many, the `zip` will truncate it.
+        model_names = self.valves.API_MODEL_NAMES.split(",") + [None] * len(models)
+        assert len(model_names) >= len(models)
+
+        return list(
+            itertools.starmap(
+                lambda model, model_name: {
+                    "id": f"reasoning/{model}",
+                    "name": (
+                        model_name if model_name is not None else f"reasoning/{model}"
+                    ),
+                },
+                zip(models, model_names),
+            )
+        )
 
     def pipe(self, body: dict):
         headers = {
